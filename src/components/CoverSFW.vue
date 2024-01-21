@@ -11,7 +11,7 @@
     >
       <div class="absolute-top-left transparent" style="padding: 0;">
         <q-chip dense square color="brown" text-color="white" class="q-ma-sm">
-          {{`RJ${rjcode}`}}
+          {{`RJ${workid}`}}
         </q-chip>
       </div>
 
@@ -53,10 +53,6 @@ export default {
       // 从 LocalStorage 中读取 token
       const token = this.$q.localStorage.getItem('jwt-token') || ''
       return this.workid ? `/api/cover/${this.workid}?token=${token}` : ""
-    },
-
-    rjcode () {
-      return (`000000${this.workid}`).slice(-6)
     },
 
     imgClass () {
