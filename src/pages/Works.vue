@@ -101,8 +101,8 @@
 </template>
 
 <script>
-import WorkCard from 'components/WorkCard'
-import WorkListItem from 'components/WorkListItem'
+import WorkCard from 'components/WorkCard.vue'
+import WorkListItem from 'components/WorkListItem.vue'
 import NotifyMixin from '../mixins/Notification.js'
 
 export default {

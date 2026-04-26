@@ -47,9 +47,20 @@
         <!-- 进度条控件 -->
         <div class="row items-center q-mx-sm q-my-sm" style="height: 40px">
           <div class="col-auto">{{ formatSeconds(currentTime) }}</div>
-          <AudioElement class="col" />
+          <q-slider
+            class="col q-mx-md"
+            :model-value="innerTime"
+            @update:model-value="onSliderUpdate"
+            :min="0"
+            :max="duration"
+            :step="0.1"
+            @pan="onSliderPan"
+            @change="onSeek"
+            color="primary"
+          />
           <div class="col-auto">{{ formatSeconds(duration) }}</div>
         </div>
+        <AudioElement ref="audioElement" v-show="false" />
 
         <!-- Place holder for iOS -->
         <div style="height: 5px" v-if="$q.platform.is.ios" />
@@ -77,14 +88,13 @@
         <!-- HTML5 volume in iOS is read-only -->
         <div class="row items-center q-mx-lg" style="height: 50px" v-if="!$q.platform.is.ios">
           <q-icon name="volume_down" size="sm" class="col-auto" />
-          <vue-slider 
+          <q-slider 
             v-model="volume"
             :min="0"
             :max="1"
-            :interval="0.01"
-            :dragOnClick="true"
-            :contained="true"
-            tooltip="none"
+            :step="0.01"
+            label-always
+            color="primary"
             class="col"
           />
           <q-icon name="volume_up" size="sm" class="col-auto" />
@@ -108,38 +118,39 @@
         <!-- 音频文件列表 -->
         <q-list style="max-height: 450px" class="scroll">
           <draggable
-            handle=".handle"
             v-model="queueCopy"
+            handle=".handle"
+            item-key="hash"
             @change="val => onMoved(val.moved)"
           >
-            <q-item
-              clickable
-              v-ripple
-              v-for="(track, index) in queueCopy"
-              :key="index"
-              :active="queueIndex === index"
-              active-class="text-white bg-teal"
-              class="non-selectable"
-              style="height: 48px; padding: 0px 10px;"
-              @click="onClickTrack(index)"
-            >
-              <q-item-section side v-show="editCurrentPlayList">
-                <q-icon name="clear" :color="queueIndex === index ? 'white' : 'red'" @click="removeFromQueue(index)" />
-              </q-item-section>
+            <template #item="{ element: track, index }">
+              <q-item
+                clickable
+                v-ripple
+                :active="queueIndex === index"
+                active-class="text-white bg-teal"
+                class="non-selectable"
+                style="height: 48px; padding: 0px 10px;"
+                @click="onClickTrack(index)"
+              >
+                <q-item-section side v-show="editCurrentPlayList">
+                  <q-icon name="clear" :color="queueIndex === index ? 'white' : 'red'" @click="removeFromQueue(index)" />
+                </q-item-section>
 
-              <q-item-section avatar>
-                <q-img transition="fade" :src="samCoverUrl(track.hash)" style="height: 38px; width: 38px" class="rounded-borders" />
-              </q-item-section>
+                <q-item-section avatar>
+                  <q-img transition="fade" :src="samCoverUrl(track.hash)" style="height: 38px; width: 38px" class="rounded-borders" />
+                </q-item-section>
 
-              <q-item-section>
-                <q-item-label lines="1">{{ track.title }}</q-item-label>
-                <q-item-label caption lines="1">{{ track.workTitle }}</q-item-label>
-              </q-item-section>
+                <q-item-section>
+                  <q-item-label lines="1">{{ track.title }}</q-item-label>
+                  <q-item-label caption lines="1">{{ track.workTitle }}</q-item-label>
+                </q-item-section>
 
-              <q-item-section side class="handle" v-show="editCurrentPlayList">
-                <q-icon name="reorder" :color="queueIndex === index ? 'white' : 'dark'" />
-              </q-item-section>
-            </q-item>
+                <q-item-section side class="handle" v-show="editCurrentPlayList">
+                  <q-icon name="reorder" :color="queueIndex === index ? 'white' : 'dark'" />
+                </q-item-section>
+              </q-item>
+            </template>
           </draggable>
         </q-list>
       </q-card>
@@ -149,7 +160,7 @@
 
 <script>
 import draggable from 'vuedraggable'
-import AudioElement from 'components/AudioElement'
+import AudioElement from 'components/AudioElement.vue'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -166,7 +177,9 @@ export default {
       editCurrentPlayList: false,
       queueCopy: [],
       hideSeekButton: false,
-      swapSeekButton: false
+      swapSeekButton: false,
+      innerTime: 0,
+      isSeeking: false
     }
   },
 
@@ -201,6 +214,12 @@ export default {
 
     swapSeekButton (option) {
       this.$q.localStorage.set('swapSeekButton', option)
+    },
+
+    currentTime (val) {
+      if (!this.isSeeking) {
+        this.innerTime = val
+      }
     }
   },
 
@@ -303,6 +322,21 @@ export default {
       rewind: 'SET_REWIND_SEEK_MODE',
       forward: 'SET_FORWARD_SEEK_MODE'
     }),
+    onSliderUpdate (val) {
+      // 只要数值发生变化（包括点击），立即锁定 watch
+      this.isSeeking = true
+      this.innerTime = val
+    },
+    onSliderPan (phase) {
+      this.isSeeking = (phase !== 'end')
+    },
+    onSeek (val) {
+      this.$refs.audioElement.seek(val)
+      // 延迟释放锁定，给播放引擎 500ms 时间跳转并返回新的 currentTime
+      setTimeout(() => {
+        this.isSeeking = false
+      }, 500)
+    },
     ...mapMutations('AudioPlayer', [
       'SET_TRACK',
       'SET_QUEUE',
@@ -343,6 +377,7 @@ export default {
     },
 
     onMoved(moved) {
+      if (!moved) return
       let index = null
       if (moved.oldIndex === this.queueIndex) {
         index = moved.newIndex

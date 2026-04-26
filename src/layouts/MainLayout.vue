@@ -139,9 +139,11 @@
 
     <q-page-container>
       <!-- <q-page padding> -->
-        <keep-alive include="Works">
-          <router-view />
-        </keep-alive>
+        <router-view v-slot="{ Component }">
+          <keep-alive include="Works">
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       <!-- </q-page> -->
         <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
           <q-btn fab icon="keyboard_arrow_up" color="accent" />
@@ -156,10 +158,10 @@
 </template>
 
 <script>
-import PlayerBar from 'components/PlayerBar'
-import AudioPlayer from 'components/AudioPlayer'
-import LyricsBar from 'components/LyricsBar'
-import SleepMode from 'components/SleepMode'
+import PlayerBar from 'components/PlayerBar.vue'
+import AudioPlayer from 'components/AudioPlayer.vue'
+import LyricsBar from 'components/LyricsBar.vue'
+import SleepMode from 'components/SleepMode.vue'
 import NotifyMixin from '../mixins/Notification.js'
 import { mapMutations, mapState } from 'vuex'
 

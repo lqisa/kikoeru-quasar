@@ -15,7 +15,7 @@
         </q-chip>
       </div>
 
-      <div :v-if="release" class="absolute-bottom-right" style="padding: 5px;">
+      <div v-if="release" class="absolute-bottom-right" style="padding: 5px;">
         {{release}}
       </div>
     </q-img>
@@ -28,7 +28,7 @@ export default {
 
   props: {
     workid: {
-      type: Number,
+      type: [String, Number],
       required: true
     },
     

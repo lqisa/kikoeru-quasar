@@ -1,8 +1,11 @@
-import Vue from 'vue'
+import { boot } from 'quasar/wrappers'
 import VuePlyr from 'vue-plyr'
- 
-Vue.use(VuePlyr, {
-  plyr: {
-    controls: ['progress']
-  }
+import 'plyr/dist/plyr.css'
+
+export default boot(({ app }) => {
+  app.use(VuePlyr, {
+    plyr: {
+      controls: ['progress']
+    }
+  })
 })

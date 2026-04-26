@@ -49,8 +49,8 @@
 </template>
 
 <script>
-// import WorkDetails from 'components/WorkDetails'
-// import CoverSFW from 'components/CoverSFW'
+// import WorkDetails from 'components/WorkDetails.vue'
+// import CoverSFW from 'components/CoverSFW.vue'
 
 export default {
   name: 'WorkListItem',

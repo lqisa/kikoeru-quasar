@@ -109,8 +109,8 @@
 </template>
 
 <script>
-// import WorkDetails from 'components/WorkDetails'
-import CoverSFW from 'components/CoverSFW'
+// import WorkDetails from 'components/WorkDetails.vue'
+import CoverSFW from 'components/CoverSFW.vue'
 import NotifyMixin from '../mixins/Notification.js'
 
 export default {

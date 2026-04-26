@@ -161,8 +161,8 @@
 </template>
 
 <script>
-import CoverSFW from 'components/CoverSFW'
-import WriteReview from './WriteReview'
+import CoverSFW from 'components/CoverSFW.vue'
+import WriteReview from './WriteReview.vue'
 import NotifyMixin from '../mixins/Notification.js'
 
 export default {

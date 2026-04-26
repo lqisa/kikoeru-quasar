@@ -1,6 +1,7 @@
 <template>
   <vue-plyr
     ref="plyr"
+    :options="{ controls: [] }"
     :emit="['canplay', 'timeupdate', 'ended', 'seeked', 'playing', 'waiting', 'pause']"
     @canplay="onCanplay()"
     @timeupdate="onTimeupdate()"
@@ -183,6 +184,12 @@ export default {
           this.$q.sessionStorage.set('sleepTime', null)
           this.$q.sessionStorage.set('sleepMode', false)
         }
+      }
+    },
+
+    seek (seconds) {
+      if (this.player) {
+        this.player.currentTime = seconds
       }
     },
 

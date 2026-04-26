@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import WriteReview from './WriteReview'
+import WriteReview from './WriteReview.vue'
 import NotifyMixin from '../mixins/Notification.js'
 
 export default {

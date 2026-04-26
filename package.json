@@ -22,33 +22,37 @@
   "scripts": {
     "start": "quasar dev",
     "build": "quasar build",
-    "test": "node_modules/.bin/eslint ."
+    "test": "eslint ."
   },
   "dependencies": {
-    "@quasar/extras": "^1.10.4",
-    "axios": "^0.21.1",
+    "@quasar/extras": "^1.16.11",
+    "axios": "^1.6.8",
     "lrc-file-parser": "^1.0.7",
-    "plyr": "^3.6.7",
-    "quasar": "^1.15.12",
-    "vue-plyr": "^6.0.4",
-    "vue-slider-component": "^3.2.11",
+    "plyr": "^3.7.8",
+    "quasar": "^2.16.4",
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2",
+    "vuex": "^4.0.2",
+    "vue-plyr": "^7.0.0",
+    "vue-slider-component": "^4.0.0-beta.6",
     "vue-socket.io": "^3.0.10",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.9.6",
-    "eslint": "^7.25.0",
-    "eslint-loader": "^4.0.2",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-vue": "^7.9.0"
+    "@quasar/app-vite": "^1.9.4",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-vue": "^9.26.0",
+    "sass": "^1.77.2",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38"
   },
   "engines": {
-    "node": "^14.0",
-    "npm": ">= 6.13.4",
-    "yarn": ">= 1.21.1"
+    "node": ">= 18.0.0",
+    "pnpm": ">= 8.0.0"
   },
   "browserslist": [
-    "last 1 version, not dead, ie >= 11"
+    "last 2 versions, not dead, > 1%"
   ],
   "eslintIgnore": [
     "dist/*",

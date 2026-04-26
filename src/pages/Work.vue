@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import WorkDetails from 'components/WorkDetails'
-// import WorkQueue from 'components/WorkQueue'
-import WorkTree from 'components/WorkTree'
+import WorkDetails from 'components/WorkDetails.vue'
+// import WorkQueue from 'components/WorkQueue.vue'
+import WorkTree from 'components/WorkTree.vue'
 import NotifyMixin from '../mixins/Notification.js'
 
 export default {

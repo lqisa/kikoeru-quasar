@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import FavListItem from 'components/FavListItem'
+import FavListItem from 'components/FavListItem.vue'
 import NotifyMixin from '../mixins/Notification.js'
 
 export default {

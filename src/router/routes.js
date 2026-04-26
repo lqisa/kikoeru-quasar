@@ -1,16 +1,16 @@
-import MainLayout from 'layouts/MainLayout'
-import DashboardLayout from 'layouts/DashboardLayout'
+import MainLayout from 'layouts/MainLayout.vue'
+import DashboardLayout from 'layouts/DashboardLayout.vue'
 
-import Works from 'pages/Works'
-import Work from 'pages/Work'
-import List from 'pages/List'
-import Login from 'pages/Login'
-import Favourites from 'pages/Favourites'
+import Works from 'pages/Works.vue'
+import Work from 'pages/Work.vue'
+import List from 'pages/List.vue'
+import Login from 'pages/Login.vue'
+import Favourites from 'pages/Favourites.vue'
 
-import Folders from 'pages/Dashboard/Folders'
-import Scanner from 'pages/Dashboard/Scanner'
-import Advanced from 'pages/Dashboard/Advanced'
-import UserManage from 'pages/Dashboard/UserManage'
+import Folders from 'pages/Dashboard/Folders.vue'
+import Scanner from 'pages/Dashboard/Scanner.vue'
+import Advanced from 'pages/Dashboard/Advanced.vue'
+import UserManage from 'pages/Dashboard/UserManage.vue'
 
 function prefixRoutes(prefix, routes) {
   return routes.map((route) => {
@@ -140,7 +140,7 @@ const routes = [
 // eslint-disable-next-line
 if (process.env.MODE !== 'ssr') {
   routes.push({
-    path: '*',
+    path: '/:catchAll(.*)*',
     component: () => import('pages/Error404.vue')
   })
 }
