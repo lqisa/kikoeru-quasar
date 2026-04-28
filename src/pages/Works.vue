@@ -224,11 +224,13 @@ export default {
     url () {
       const query = this.$route.query
       if (query.circleId) {
-        return `/api/circles/${this.$route.query.circleId}/works`
+        return `/api/circles/${query.circleId}/works`
+            } else if (query.tagIds) {
+        return `/api/tags-multi/works?tagIds=${query.tagIds}`
       } else if (query.tagId) {
-        return `/api/tags/${this.$route.query.tagId}/works`
+        return `/api/tags/${query.tagId}/works`
       } else if (query.vaId) {
-        return `/api/vas/${this.$route.query.vaId}/works`
+        return `/api/vas/${query.vaId}/works`
       } else if (query.keyword) {
         return `/api/search/${query.keyword}`
       } else {
@@ -308,18 +310,28 @@ export default {
         })
     },
 
-    refreshPageTitle () {
-      if (this.$route.query.circleId || this.$route.query.tagId || this.$route.query.vaId) {
+        refreshPageTitle () {
+      const query = this.$route.query
+      if (query.tagIds) {
+        // 多标签搜索：从 API 获取每个标签的名称
+        const tagIdArr = query.tagIds.split(',')
+        const promises = tagIdArr.map(id =>
+          this.$axios.get(`/api/tags/${id}`).then(res => res.data.name).catch(() => id)
+        )
+        Promise.all(promises).then(names => {
+          this.pageTitle = `Works tagged with ${names.join(' + ')}`
+        })
+      } else if (query.circleId || query.tagId || query.vaId) {
         let url = '', restrict = ''
-        if (this.$route.query.circleId) {
+        if (query.circleId) {
           restrict = 'circles'
-          url = `/api/${restrict}/${this.$route.query.circleId}`
-        } else if (this.$route.query.tagId) {
+          url = `/api/${restrict}/${query.circleId}`
+        } else if (query.tagId) {
           restrict = 'tags'
-          url = `/api/${restrict}/${this.$route.query.tagId}`
+          url = `/api/${restrict}/${query.tagId}`
         } else {
           restrict = 'vas'
-          url = `/api/${restrict}/${this.$route.query.vaId}`
+          url = `/api/${restrict}/${query.vaId}`
         }
 
         this.$axios.get(url)
@@ -352,8 +364,8 @@ export default {
               this.showErrNotif(error.message || error)
             }
           })
-      } else if (this.$route.query.keyword) {
-        this.pageTitle = `Search by ${this.$route.query.keyword}`
+      } else if (query.keyword) {
+        this.pageTitle = `Search by ${query.keyword}`
       } else {
         this.pageTitle = 'All works'
       }
