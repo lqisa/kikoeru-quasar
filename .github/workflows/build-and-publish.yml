@@ -1,6 +1,7 @@
 name: Build and push
 
 on:
+  workflow_dispatch:
   push:
     branches-ignore:
       - "dependabot/**"
@@ -14,20 +15,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-  
-      - name: Use Node.js 14
-        uses: actions/setup-node@v2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '14'
+          version: 9
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
 
       - name: Install dependencies
-        run: npm install -g @quasar/cli && npm ci
+        run: pnpm install --frozen-lockfile
 
       # Note: we don't have any unit tests yet
       # Only ESLint is available, which is integrated into quasar.conf.js
       - name: Build SPA and PWA
-        run: quasar build && quasar build -m pwa
-        
+        run: pnpm exec quasar build && pnpm exec quasar build -m pwa
+
       # Convert to a valid filename
       # refs/tags/v1.2.3 => v1.2.3
       # refs/heads/unstable => unstable
@@ -35,16 +43,16 @@ jobs:
       # refs/pull/421/merge => merge
       - name: Get branch or tag name
         id: source_name
-        run: echo ::set-output name=SOURCE_NAME::${GITHUB_REF##*/}
+        run: echo "SOURCE_NAME=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
 
-      - name: 'Upload artifact: SPA'
-        uses: actions/upload-artifact@v2
+      - name: "Upload artifact: SPA"
+        uses: actions/upload-artifact@v4
         with:
           name: SPA-${{ steps.source_name.outputs.SOURCE_NAME }}
           path: dist/spa/
 
-      - name: 'Upload artifact: PWA'
-        uses: actions/upload-artifact@v2
+      - name: "Upload artifact: PWA"
+        uses: actions/upload-artifact@v4
         with:
           name: PWA-${{ steps.source_name.outputs.SOURCE_NAME }}
           path: dist/pwa/
@@ -66,7 +74,9 @@ jobs:
 
   build-and-push:
     name: Publish docker images to Docker Hub
-    if: contains(fromJson('["refs/heads/unstable", "refs/tags/", "refs/heads/stable"]'), github.ref)
+    # Temporarily disable Docker publish job
+    if: ${{ false }}
+    # if: contains(fromJson('["refs/heads/unstable", "refs/tags/", "refs/heads/stable"]'), github.ref)
     # Note: we don't have any unit tests yet
     # Only ESLint is available, which is integrated into quasar.conf.js
     # Prevent execution of docker job if the linter fails
@@ -75,7 +85,7 @@ jobs:
 
     steps:
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -105,7 +115,7 @@ jobs:
       # refs/pull/421/merge => merge
       - name: Get branch or tag name
         id: source_name
-        run: echo ::set-output name=SOURCE_NAME::${GITHUB_REF##*/}
+        run: echo "SOURCE_NAME=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@v2

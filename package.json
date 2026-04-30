@@ -45,7 +45,8 @@
     "eslint-plugin-vue": "^9.26.0",
     "sass": "^1.77.2",
     "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38"
+    "postcss": "^8.4.38",
+    "workbox-build": "7.0.0"
   },
   "engines": {
     "node": ">= 18.0.0",
